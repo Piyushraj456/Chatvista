@@ -1,8 +1,17 @@
 import React from "react";
 import { ChatState } from "../Context/ChatProvider";
 import Lottie from "react-lottie";
+import countries from "./miscellaneous/countries";
 import { Box, Text } from "@chakra-ui/layout";
-import appLogo from "./image/app-logo1.jpg"
+import appLogo from "./image/app-logo1.jpg";
+import GTranslateIcon from "@mui/icons-material/GTranslate";
+import {
+  Menu,
+  MenuButton,
+  MenuDivider,
+  MenuItem,
+  MenuList,
+} from "@chakra-ui/menu";
 
 import { Icon, createIcon } from "@chakra-ui/react";
 import { IconButton, Spinner, useToast } from "@chakra-ui/react";
@@ -31,7 +40,7 @@ import io from "socket.io-client";
 
 import animationData from "../animation/Animation - 1700225944272.json";
 import { AttachmentIcon } from "@chakra-ui/icons";
-import SendIcon from '@mui/icons-material/Send';
+import SendIcon from "@mui/icons-material/Send";
 import AddReactionRoundedIcon from "@mui/icons-material/AddReactionRounded";
 import "./style.css";
 
@@ -44,6 +53,9 @@ var socket, selectedChatCompare;
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, setSelectedChat, user, notification, setNotification } =
     ChatState();
+  const [lang, setLang] = useState(false);
+  const [languageSearchTerm, setLanguageSearchTerm] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setsocketConnected] = useState(false);
@@ -51,10 +63,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [pic, setPic] = useState();
   const [picLoading, setPicLoading] = useState(false);
   const [typing, setTyping] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [emojiList, setEmojiList] = useState([]);
   const [istyping, setIsTyping] = useState(false);
   const [filteredEmojiList, setFilteredEmojiList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const toast = useToast();
 
   const defaultOptions = {
@@ -75,6 +88,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   }, []);
 
   const fileInputRef = useRef(null);
+  const handleDelete = (messageId) => {
+    // Filter out the message with the given messageId
+    const updatedMessages = messages.filter((message) => message._id !== messageId);
+    setMessages(updatedMessages);
+  };
 
   const handleImageSelection = (e) => {
     const file = e.target.files[0];
@@ -100,13 +118,24 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     fileInputRef.current.click();
   };
 
+  const handleLanguageSelect = async (language) => {
+    // const translatedMessage = await translateMessage(newMessage, language);
+    // setNewMessage(translatedMessage);
+    let transLink = `https://api.mymemory.translated.net/get?q=${newMessage}&langpair=en|${language}`;
+    fetch(transLink)
+      .then((translate) => translate.json())
+      .then((data) => {
+        setNewMessage(data.responseData.translatedText);
+      });
+  };
+
   const fetchEmoji = async () => {
     try {
       const response = await fetch(
         "https://emoji-api.com/emojis?access_key=71791f34c4cb106970cb1ba19a13d41def797fec"
       );
       const data = await response.json();
-      setEmojiList(data)
+      setEmojiList(data);
       setFilteredEmojiList(data);
     } catch (error) {
       console.log("Error loading emoji", error);
@@ -132,8 +161,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     loadEmoji();
   }, [emojiList]);
 
-  
- 
   const handleEmojiSearch = (e) => {
     const searchInput = e.target.value.toLowerCase();
     setSearchTerm(searchInput);
@@ -152,6 +179,37 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const handleEmojiSelection = (emoji) => {
     const updatedMessage = newMessage + emoji.character;
     setNewMessage(updatedMessage);
+  };
+
+  const translateMessage = async (text, targetLanguage) => {
+    const url = "https://microsoft-translator-text.p.rapidapi.com/translate";
+    const apiKey = "bf420af9e2msha04cfd0d9a21b27p1f0594jsn2b52bc42f7f2";
+
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-RapidAPI-Key": apiKey,
+        "X-RapidAPI-Host": "microsoft-translator-text.p.rapidapi.com",
+      },
+      body: [
+        {
+          Text: text,
+        },
+      ],
+    };
+
+    try {
+      const response = await fetch(
+        `${url}?to[0]=${targetLanguage}&api-version=3.0&profanityAction=NoAction&textType=plain`,
+        options
+      );
+      const result = await response.json();
+      return result[0]?.translations[0]?.text || text;
+    } catch (error) {
+      console.error(error);
+      return text;
+    }
   };
 
   const fetchMessages = async () => {
@@ -228,7 +286,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   };
 
   const sendMessage = async (event) => {
-    if (event.key === "Enter"||event.type === "click" && newMessage) {
+    if (event.key === "Enter" || (event.type === "click" && newMessage)) {
       socket.emit("stop typing", selectedChat._id);
       try {
         const config = {
@@ -276,18 +334,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             justifyContent={{ base: "space-between" }}
             alignItems="center"
           >
-           
             <IconButton
               d={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat("")}
-              style={{border:"0.3px solid grey"}}
+              style={{ border: "0.3px solid grey" }}
             />
             {messages &&
               (!selectedChat.isGroupChat ? (
                 <>
                   {getSender(user, selectedChat.users)}
-                  <ProfileModal  style={{border:"0.3px solid grey"}}
+                  <ProfileModal
+                    style={{ border: "0.3px solid grey" }}
                     user={getSenderFull(user, selectedChat.users)}
                   />
                 </>
@@ -298,7 +356,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     fetchMessages={fetchMessages}
                     fetchAgain={fetchAgain}
                     setFetchAgain={setFetchAgain}
-                    style={{border:"0.3px solid grey"}}
+                    style={{ border: "0.3px solid grey" }}
                   />
                 </>
               ))}
@@ -325,7 +383,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             ) : (
               <div className="messages">
-                <ScrollableChat messages={messages} />
+                <ScrollableChat messages={messages} onDelete={handleDelete}/>
               </div>
             )}
             <FormControl
@@ -353,8 +411,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   icon={<AttachmentIcon />}
                   className="image-icon"
                   onClick={handleImageIconClick}
-                  style={{ borderRadius: "12px"}}
-                  
+                  style={{ borderRadius: "12px" }}
                 />
                 <input
                   ref={fileInputRef}
@@ -373,14 +430,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   className="msg-input"
                 />
                 <IconButton
-                      ml={2}
-                      aria-label="send-msg"
-                      icon={<SendIcon/>}
-                      onClick={sendMessage} 
-                      className="send-btn"
-                      style={{ borderRadius: "10px" }}
-                    />
-                
+                  ml={2}
+                  aria-label="send-msg"
+                  icon={<SendIcon />}
+                  onClick={sendMessage}
+                  className="send-btn"
+                  style={{ borderRadius: "10px" }}
+                />
 
                 <Popover placement="bottom-end">
                   <PopoverTrigger>
@@ -392,7 +448,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                       style={{ borderRadius: "12px" }}
                     />
                   </PopoverTrigger>
-                  <PopoverContent style={{ borderRadius: "12px",justifyContent:"center" }}>
+                  <PopoverContent
+                    style={{ borderRadius: "12px", justifyContent: "center" }}
+                  >
                     <PopoverHeader
                       fontWeight="semibold"
                       style={{ alignItems: "center", justifyContent: "center" }}
@@ -401,7 +459,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         variant="filled"
                         bg="#E0E0E0"
                         placeholder="Search Emoji"
-                        
                         onChange={handleEmojiSearch}
                         style={{
                           borderRadius: "15px",
@@ -410,23 +467,81 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         className="emoji-search"
                       />
                     </PopoverHeader>
-                    <PopoverArrow />
 
-                    <PopoverBody className="emoji-content" >
+                    <PopoverBody className="emoji-content">
                       <div className="emoji-body">
-                      {searchTerm && filteredEmojiList.length === 0 ? (
-            <span>No matching emojis found</span>
-          ) : (
-            filteredEmojiList.map((emoji) => (
-              <span key={emoji.slug} className="emoji"
-              onClick={() => handleEmojiSelection(emoji)}
-              >
-                {emoji.character}
-              </span>
-            ))
-          )}
+                        {searchTerm && filteredEmojiList.length === 0 ? (
+                          <span>No matching emojis found</span>
+                        ) : (
+                          filteredEmojiList.map((emoji) => (
+                            <span
+                              key={emoji.slug}
+                              className="emoji"
+                              onClick={() => handleEmojiSelection(emoji)}
+                            >
+                              {emoji.character}
+                            </span>
+                          ))
+                        )}
                       </div>
-                      </PopoverBody>
+                    </PopoverBody>
+                  </PopoverContent>
+                </Popover>
+                <Popover placement="bottom-end" style={{ width: "25px" }}>
+                  <PopoverTrigger>
+                    <IconButton
+                      ml={2}
+                      aria-label="Emoji"
+                      icon={<GTranslateIcon />}
+                      className="emoji-icon"
+                      style={{ borderRadius: "12px" }}
+                      id="google_translate_element"
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent
+                    style={{
+                      borderRadius: "12px",
+                      justifyContent: "center",
+                      width: "190px",
+                    }}
+                  >
+                    <PopoverHeader
+                      fontWeight="semibold"
+                      style={{ alignItems: "center", justifyContent: "center" }}
+                    >
+                      <Input
+                        variant="filled"
+                        bg="#E0E0E0"
+                        placeholder="Search Language"
+                        value={languageSearchTerm}
+                        onChange={(e) => setLanguageSearchTerm(e.target.value)}
+                        style={{
+                          borderRadius: "15px",
+                          justifyContent: "center",
+                        }}
+                        className="emoji-search"
+                      />
+                    </PopoverHeader>
+
+                    <PopoverBody className="emoji-content">
+                      <div className="emoji-body">
+                        {Object.values(countries)
+                          .filter((country) =>
+                            country
+                              .toLowerCase()
+                              .includes(languageSearchTerm.toLowerCase())
+                          )
+                          .map((country, index) => (
+                            <Text
+                              key={index}
+                              onClick={() => handleLanguageSelect(country)}
+                              className="lange-text"
+                            >
+                              {country}
+                            </Text>
+                          ))}
+                      </div>
+                    </PopoverBody>
                   </PopoverContent>
                 </Popover>
               </Box>
@@ -441,11 +556,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           justifyContent="center"
           h="100%"
         >
-         
           <img src={appLogo} alt="app-logo" className="app-logo" />
-           <Text fontSize="3xl" pb={3} fontFamily="poppins" justifyContent={"center"}>
-            <h4 style={{marginLeft:"20px"}}>Welcome to ChatVista!👋</h4>
-                <h2 style={{marginLeft:"40px"}}>Click on users to chat</h2>  
+          <Text
+            fontSize="3xl"
+            pb={3}
+            fontFamily="poppins"
+            justifyContent={"center"}
+          >
+            <h4 style={{ marginLeft: "20px" }}>Welcome to ChatVista!👋</h4>
+            <h2 style={{ marginLeft: "40px" }}>Click on users to chat</h2>
           </Text>
         </Box>
       )}

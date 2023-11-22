@@ -4,6 +4,10 @@
   overflow-y: scroll;
   scrollbar-width: none;
 }
+.lange-text:hover {
+  background-color: #e1e1e1;
+  border-radius: 14px;
+}
 
 .chat-message {
   box-shadow: rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
@@ -69,7 +73,6 @@
   height: 230px !important;
   width: 50px;
 }
-
 
 .lang-list::-webkit-scrollbar {
   width: 6px;
