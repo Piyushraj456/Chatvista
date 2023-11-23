@@ -12,9 +12,6 @@ dotenv.config();
 connectDB();
 const app = express();
 app.use(express.json());
-app.get("/", (req, res) => {
-  res.send("<h1> Chat Vista BACKEND....new</h1>");
-});
 
 app.use("/api/user", userRoutes);
 app.use("/api/chats", chatRoutes);
@@ -22,19 +19,21 @@ app.use("/api/message", messageRoutes);
 
 // ---------------------deployment--------------------
 const __dirname1 = path.resolve();
+
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname1, "/frontend/chatvista/dist")));
+ 
+  app.use(express.static(path.join(__dirname1, "frontend/chatvista/dist")));
 
+  // For all other routes, serve the index.html file
   app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname1, "frontend","chatvista", "dist","index.html"))
+    res.sendFile(path.resolve(__dirname1, "frontend", "chatvista", "dist", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running ...");
   });
 }
 
-else {
-  app.get("/", (req, res) => {
-    res.send("API is running successfully");
-  });
-}
 
 // ---------------------deployment--------------------
 app.use(notFound);
@@ -45,7 +44,7 @@ const server = app.listen(PORT, console.log(`Server started on port ${PORT}`));
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ["http://localhost:3000", "http://localhost:5173"],
+    origin: "http://localhost:5173",
   },
 });
 
