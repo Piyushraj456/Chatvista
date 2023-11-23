@@ -6,7 +6,7 @@
   "scripts": {
     "start": "nodemon backend/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "npm install --prefix frontend/chatvista && npm run build --prefix frontend/chatvista --legacy-peer-deps"
+    "build": "npm install --prefix frontend/chatvista && npm run build --prefix frontend/chatvista --force"
   },
   "keywords": [
     "mern",
