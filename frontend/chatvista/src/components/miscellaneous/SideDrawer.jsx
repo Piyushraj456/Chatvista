@@ -36,8 +36,8 @@ import { useToast } from "@chakra-ui/toast";
 import { ChatState } from "../../Context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useNavigate } from "react-router-dom";
-import NotificationBadge from "react-notification-badge";
-import { Effect } from "react-notification-badge";
+// import NotificationBadge from "react-notification-badge";
+// import { Effect } from "react-notification-badge";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -48,6 +48,7 @@ const SideDrawer = () => {
   
   const [loading, setLoading] = useState(false);
   const [messages, setmessages] = useState();
+ 
   
   const [loadingChat, setLoadingChat] = useState(false);
   const {
@@ -67,13 +68,6 @@ const SideDrawer = () => {
     navigate("/");
   };
 
-  const handleLanguageSelect = (language) => {
-    
-    const countryCode = Object.keys(countries).find(
-      (key) => countries[key] === language
-    );
-    setSelectedLanguage(countryCode);
-  };
 
   const accessChat = async (userId) => {
     console.log(userId);
@@ -178,10 +172,19 @@ const SideDrawer = () => {
 
           <Menu>
             <MenuButton p={1}>
-              <NotificationBadge
+              {/* <NotificationBadge
                 count={notification.length}
                 effect={Effect.SCALE}
-              />
+              /> */}
+              <div>
+       {notification.length > 0 && (
+         <div className="notification-badge">
+              <span className="badge">    
+                  {notification.length}
+              </span>
+          </div>
+          )}
+   </div>
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
             <MenuList pl={2}>

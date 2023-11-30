@@ -80,7 +80,7 @@ const ScrollableChat = ({ messages, onDelete }) => {
             <span
               style={{
                 fontSize: "10px",
-                color: "#999",
+                color: "#DDF2FD",
                 marginTop: "5px",
                 alignSelf: m.sender._id === user._id ? "flex-end" : "flex-start",
               }}

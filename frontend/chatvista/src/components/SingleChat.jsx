@@ -2,10 +2,12 @@ import React from "react";
 import { ChatState } from "../Context/ChatProvider";
 // import Lottie from "react-lottie";
 import countries from "./miscellaneous/countries";
+
 import { Box, Text } from "@chakra-ui/layout";
 import chatBg from "./image/chat-bg1.jpg";
 import appLogo from "./image/app-logo1.jpg";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
+import KeyboardVoiceIcon from '@mui/icons-material/KeyboardVoice';
 import {
   Menu,
   MenuButton,
@@ -22,10 +24,7 @@ import {
   PopoverContent,
   PopoverHeader,
   PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
+ 
 } from "@chakra-ui/react";
 import "../App.css";
 import { FormControl } from "@chakra-ui/react";
@@ -81,6 +80,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     },
   };
 
+ 
+
   useEffect(() => {
     socket = io(ENDPOINT);
     socket.emit("setup", user);
@@ -97,6 +98,29 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     );
     setMessages(updatedMessages);
   };
+
+  // const handleVoiceIconClick = () => {
+  //   resetTranscript();
+  //   SpeechRecognition.startListening();
+  // };
+
+  // const handleStopListening = () => {
+  //   SpeechRecognition.stopListening();
+  // };
+
+  // useEffect(() => {
+  //   const handleVoiceInput = () => {
+  //     setNewMessage(transcript);
+  //     handleStopListening();
+  //   };
+
+  //   if (transcript && transcript !== newMessage) {
+  //     handleVoiceInput();
+  //   }
+  // }, [transcript, newMessage]);
+
+
+
 
   const handleImageSelection = (e) => {
     const file = e.target.files[0];
@@ -419,6 +443,14 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   icon={<AttachmentIcon />}
                   className="image-icon"
                   onClick={handleImageIconClick}
+                  style={{ borderRadius: "12px" }}
+                />
+                  <IconButton
+                  ml={2}
+                  aria-label="Voice Icon"
+                  icon={<KeyboardVoiceIcon />}
+                  className="Voice-icon"
+                  // onClick={handleVoiceIconClick}
                   style={{ borderRadius: "12px" }}
                 />
                 <input
