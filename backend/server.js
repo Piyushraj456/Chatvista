@@ -8,6 +8,7 @@ const chatRoutes = require("./routes/chatRoutes"); //
 const messageRoutes = require("./routes/messageRoutes");
 const path = require("path");
 
+
 dotenv.config();
 connectDB();
 const app = express();
