@@ -3,6 +3,7 @@ import { ChatState } from "../Context/ChatProvider";
 import Lottie from "react-lottie";
 import countries from "./miscellaneous/countries";
 import { Box, Text } from "@chakra-ui/layout";
+import chatBg from "./image/chat-bg1.jpg";
 import appLogo from "./image/app-logo1.jpg";
 import GTranslateIcon from "@mui/icons-material/GTranslate";
 import {
@@ -68,6 +69,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [istyping, setIsTyping] = useState(false);
   const [filteredEmojiList, setFilteredEmojiList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [inputselect, setInputselect] = useState(false);
   const toast = useToast();
 
   const defaultOptions = {
@@ -90,7 +92,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const fileInputRef = useRef(null);
   const handleDelete = (messageId) => {
     // Filter out the message with the given messageId
-    const updatedMessages = messages.filter((message) => message._id !== messageId);
+    const updatedMessages = messages.filter(
+      (message) => message._id !== messageId
+    );
     setMessages(updatedMessages);
   };
 
@@ -366,9 +370,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             flexDir="column"
             justifyContent="flex-end"
             p={3}
-            bg={"white"}
             w="100%"
             h="100%"
+            // bgImage={chatBg}
             borderRadius="lg"
             overflowY="hidden"
             className="chats-box"
@@ -383,7 +387,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               />
             ) : (
               <div className="messages">
-                <ScrollableChat messages={messages} onDelete={handleDelete}/>
+                <ScrollableChat messages={messages} onDelete={handleDelete} />
               </div>
             )}
             <FormControl
@@ -422,13 +426,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 />
                 <Input
                   variant="filled"
-                  bg="#E0E0E0"
                   placeholder="Enter a Message ..."
                   value={newMessage}
+                  color="black"
                   onChange={typingHandler}
-                  style={{ borderRadius: "18px" }}
+                  style={{
+                    borderRadius: "18px",
+                    backgroundColor: typing ? "white" : "white",
+                  }}
                   className="msg-input"
                 />
+
                 <IconButton
                   ml={2}
                   aria-label="send-msg"

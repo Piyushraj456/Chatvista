@@ -24,20 +24,25 @@
   }
   
   .chat-container{
-    background-color: #AEC4FC;
+    background-color:#B4BDFF;
     
     
     box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
   }
 .chat-box{
     box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -1px 6px 1px inset;
+   
 }
 .new-group-chat{
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 .chats-box{
-    box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
-    background-color: #AEC4FC;
+    /* box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset; */
+    /* background-color: #AEC4FC; */
+    background-image: url("../src/components/image/chat-bg1.jpg");
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
 }
 .image-icon{
 

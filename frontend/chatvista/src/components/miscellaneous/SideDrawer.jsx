@@ -144,34 +144,8 @@ const SideDrawer = () => {
  
 
 
-  const translateMessage = async (text, targetLanguage) => {
-    const url = 'https://microsoft-translator-text.p.rapidapi.com/translate';
-    const apiKey = 'bf420af9e2msha04cfd0d9a21b27p1f0594jsn2b52bc42f7f2';
   
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': apiKey,
-        'X-RapidAPI-Host': 'microsoft-translator-text.p.rapidapi.com',
-      },
-      body: [
-        {
-          Text: text,
-        },
-      ],
-    };
-  
-    try {
-      const response = await fetch(`${url}?to[0]=${targetLanguage}&api-version=3.0&profanityAction=NoAction&textType=plain`, options);
-      const result = await response.json();
-      return result[0]?.translations[0]?.text || text;
-    } catch (error) {
-      console.error(error);
-      return text;
-    }
-  };
-  
+ 
 
 
 
@@ -200,32 +174,7 @@ const SideDrawer = () => {
           ChatVista
         </Text>
         <div>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-              <GTranslateIcon size={"sm"} cursor={"pointer"} />
-              {selectedLanguage && (
-                <Text ml={2} fontSize="sm">
-                  ({selectedLanguage})
-                </Text>
-              )}
-            </MenuButton>
-            <MenuList className="lang-list">
-              {Object.values(countries).map((country, index) => (
-                <MenuItem
-                  key={index}
-                  onClick={() => {
-                   handleLanguageSelect(country)
-                    // translateMessage();
-                    setLang(true);
-                   
-                  }}
           
-                >
-                  {country}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
 
           <Menu>
             <MenuButton p={1}>
