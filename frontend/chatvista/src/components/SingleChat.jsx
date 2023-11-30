@@ -1,6 +1,6 @@
 import React from "react";
 import { ChatState } from "../Context/ChatProvider";
-import Lottie from "react-lottie";
+// import Lottie from "react-lottie";
 import countries from "./miscellaneous/countries";
 import { Box, Text } from "@chakra-ui/layout";
 import chatBg from "./image/chat-bg1.jpg";
@@ -384,6 +384,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 h={20}
                 alignSelf="center"
                 margin="auto"
+                thickness="5px"
+                speed="0.65s"
+                emptyColor="gray.300"
+                color="blue.500"
               />
             ) : (
               <div className="messages">
@@ -398,12 +402,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             >
               {istyping ? (
                 <div>
-                  <Lottie
+                  {/* <Lottie
                     options={defaultOptions}
                     // height={50}
                     width={70}
                     style={{ marginBottom: 15, marginLeft: 0 }}
-                  />
+                  /> */}
                 </div>
               ) : (
                 <></>
